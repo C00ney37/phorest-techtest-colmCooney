@@ -25,39 +25,43 @@ public record MachineConfig(int slotCount, List<String> colours, int adjacentMat
     public static final int MAX_SLOTS = 100_000;
     public static final int MAX_COLOURS = 10_000;
 
+    /** The original game: four slots, each showing black, white, green or yellow, with a pair of adjacent slots winning. */
+    public static final int DEFAULT_SLOT_COUNT = 4;
+    public static final List<String> DEFAULT_COLOURS = List.of("black", "white", "green", "yellow");
+    public static final int DEFAULT_ADJACENT_MATCH_LENGTH = 2;
+
     public MachineConfig {
         if (slotCount < MIN_SLOTS || slotCount > MAX_SLOTS) {
-            throw new IllegalArgumentException(
+            throw new InvalidMachineConfigException(
                     "A machine needs between " + MIN_SLOTS + " and " + MAX_SLOTS + " slots, got " + slotCount);
         }
         colours = List.copyOf(colours);
         if (colours.size() < MIN_COLOURS || colours.size() > MAX_COLOURS) {
-            throw new IllegalArgumentException(
+            throw new InvalidMachineConfigException(
                     "A machine needs between " + MIN_COLOURS + " and " + MAX_COLOURS + " colours, got " + colours.size());
         }
         requireDistinctNonBlank(colours);
         if (adjacentMatchLength < MIN_ADJACENT_MATCH_LENGTH || adjacentMatchLength > slotCount) {
-            throw new IllegalArgumentException("The adjacent match length must be between " + MIN_ADJACENT_MATCH_LENGTH
+            throw new InvalidMachineConfigException("The adjacent match length must be between " + MIN_ADJACENT_MATCH_LENGTH
                     + " and the slot count (" + slotCount + "), got " + adjacentMatchLength);
         }
         if (playCost <= 0) {
-            throw new IllegalArgumentException("The play cost must be positive, got " + playCost);
+            throw new InvalidMachineConfigException("The play cost must be positive, got " + playCost);
         }
     }
 
-    /** The original game: four slots, each showing black, white, green or yellow, with a pair of adjacent slots winning. */
     public static MachineConfig classic(long playCost) {
-        return new MachineConfig(4, List.of("black", "white", "green", "yellow"), 2, playCost);
+        return new MachineConfig(DEFAULT_SLOT_COUNT, DEFAULT_COLOURS, DEFAULT_ADJACENT_MATCH_LENGTH, playCost);
     }
 
     private static void requireDistinctNonBlank(List<String> colours) {
         Set<String> seen = new HashSet<>();
         for (String colour : colours) {
             if (colour.isBlank()) {
-                throw new IllegalArgumentException("Colour names must not be blank");
+                throw new InvalidMachineConfigException("Colour names must not be blank");
             }
             if (!seen.add(colour.toLowerCase(Locale.ROOT))) {
-                throw new IllegalArgumentException("Duplicate colour: " + colour);
+                throw new InvalidMachineConfigException("Duplicate colour: " + colour);
             }
         }
     }

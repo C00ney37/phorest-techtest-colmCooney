@@ -27,3 +27,10 @@ How I used AI (Claude Code) on this project: what worked, where I steered it, wh
 
 - Claude put the per-machine lock in the service, not the repository, so the store stays a plain save/find that could later become a database. The service checks a machine exists before creating its lock, so made-up ids don't leave locks behind.
 - The concurrency test checks that money and free plays balance exactly across 8,000 concurrent plays. I had Claude remove the lock temporarily to prove the test can fail: it failed 3 runs out of 3, then the lock was restored.
+
+## Stage 6: REST API (Part 4)
+
+- Spring Boot 4 moved the test annotations and Jackson packages, so Claude read the package names out of the dependency jars instead of guessing from Boot 3 habits.
+- A test for unknown JSON fields showed Jackson quietly ignores them by default. With optional fields defaulting to the classic game, a typo like `slotCnt` would silently give the wrong machine, so strict parsing is switched on.
+- `MachineConfig` now throws a specific `InvalidMachineConfigException`, so the API maps only config errors to 400 rather than catching every `IllegalArgumentException` and hiding real bugs as client errors.
+- Beyond the tests, Claude ran the packaged app and exercised each endpoint with curl.
