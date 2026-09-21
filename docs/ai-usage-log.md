@@ -34,3 +34,8 @@ How I used AI (Claude Code) on this project: what worked, where I steered it, wh
 - A test for unknown JSON fields showed Jackson quietly ignores them by default. With optional fields defaulting to the classic game, a typo like `slotCnt` would silently give the wrong machine, so strict parsing is switched on.
 - `MachineConfig` now throws a specific `InvalidMachineConfigException`, so the API maps only config errors to 400 rather than catching every `IllegalArgumentException` and hiding real bugs as client errors.
 - Beyond the tests, Claude ran the packaged app and exercised each endpoint with curl.
+
+## Stage 7: OpenAPI and Swagger UI
+
+- I told Claude which springdoc line matches Spring Boot 4.1.1 (3.1.1 or newer). Claude checked Maven Central and pinned 3.1.1.
+- Claude annotated the controller and DTOs with descriptions, examples and the documented 400/404 problem responses. The test checks the generated spec covers every endpoint and required field, and that the UI page is served.
