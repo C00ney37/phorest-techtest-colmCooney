@@ -1,4 +1,4 @@
-package com.colmcooney.fruitmachine.api;
+package com.colmcooney.fruitmachine.controller;
 
 import com.colmcooney.fruitmachine.domain.InvalidMachineConfigException;
 import com.colmcooney.fruitmachine.service.MachineNotFoundException;

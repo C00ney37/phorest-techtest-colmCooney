@@ -1,4 +1,4 @@
-package com.colmcooney.fruitmachine.api;
+package com.colmcooney.fruitmachine.controller;
 
 import com.colmcooney.fruitmachine.domain.MachineConfig;
 import io.swagger.v3.oas.annotations.media.Schema;

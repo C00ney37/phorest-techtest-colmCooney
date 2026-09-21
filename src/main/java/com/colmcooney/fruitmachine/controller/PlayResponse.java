@@ -1,4 +1,4 @@
-package com.colmcooney.fruitmachine.api;
+package com.colmcooney.fruitmachine.controller;
 
 import com.colmcooney.fruitmachine.domain.PlayOutcome;
 import com.colmcooney.fruitmachine.domain.PrizeTier;

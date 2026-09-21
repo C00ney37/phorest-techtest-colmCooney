@@ -1,4 +1,4 @@
-package com.colmcooney.fruitmachine.api;
+package com.colmcooney.fruitmachine.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

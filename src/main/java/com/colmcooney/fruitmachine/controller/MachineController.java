@@ -1,4 +1,4 @@
-package com.colmcooney.fruitmachine.api;
+package com.colmcooney.fruitmachine.controller;
 
 import com.colmcooney.fruitmachine.domain.Machine;
 import com.colmcooney.fruitmachine.service.MachineService;
