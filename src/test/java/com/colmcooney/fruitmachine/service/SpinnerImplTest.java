@@ -13,7 +13,7 @@ class SpinnerImplTest {
 
     private static final long SEED = 42L;
 
-    private final MachineConfig config = MachineConfig.classic();
+    private final MachineConfig config = MachineConfig.classic(100);
     private final SpinnerImpl spinner = new SpinnerImpl(new Random(SEED));
 
     @Test

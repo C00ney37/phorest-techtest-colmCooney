@@ -6,10 +6,11 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * The shape of a machine: how many slots it has and which colours each slot can show.
+ * The fixed rules of a machine: how many slots it has, which colours each slot can show, and what a play costs.
  * Colours are compared case-insensitively, so "Black" and "black" count as duplicates.
+ * The play cost is in minor units (e.g. cents).
  */
-public record MachineConfig(int slotCount, List<String> colours) {
+public record MachineConfig(int slotCount, List<String> colours, long playCost) {
 
     public static final int MIN_SLOTS = 2;
     public static final int MIN_COLOURS = 2;
@@ -23,11 +24,14 @@ public record MachineConfig(int slotCount, List<String> colours) {
             throw new IllegalArgumentException("A machine needs at least " + MIN_COLOURS + " colours, got " + colours.size());
         }
         requireDistinctNonBlank(colours);
+        if (playCost <= 0) {
+            throw new IllegalArgumentException("The play cost must be positive, got " + playCost);
+        }
     }
 
     /** The original game: four slots, each showing black, white, green or yellow. */
-    public static MachineConfig classic() {
-        return new MachineConfig(4, List.of("black", "white", "green", "yellow"));
+    public static MachineConfig classic(long playCost) {
+        return new MachineConfig(4, List.of("black", "white", "green", "yellow"), playCost);
     }
 
     private static void requireDistinctNonBlank(List<String> colours) {
