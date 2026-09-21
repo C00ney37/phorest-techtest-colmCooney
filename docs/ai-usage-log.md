@@ -22,3 +22,8 @@ How I used AI (Claude Code) on this project: what worked, where I steered it, wh
 
 - Moved `k` onto `MachineConfig` and replaced the pair check with a single-pass run-length scan, so the cost is O(n) for any `k`. Added upper limits on slots and colours so the API stage has hard bounds to validate against.
 - Scale tests run at the limits (100,000 slots, thousands of colours). The large-`k` case is built so that re-checking a window of `k` slots at every position would blow the timeout.
+
+## Stage 5: Machine service, repository and locking
+
+- Claude put the per-machine lock in the service, not the repository, so the store stays a plain save/find that could later become a database. The service checks a machine exists before creating its lock, so made-up ids don't leave locks behind.
+- The concurrency test checks that money and free plays balance exactly across 8,000 concurrent plays. I had Claude remove the lock temporarily to prove the test can fail: it failed 3 runs out of 3, then the lock was restored.
