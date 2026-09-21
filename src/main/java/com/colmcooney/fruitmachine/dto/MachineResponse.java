@@ -1,4 +1,4 @@
-package com.colmcooney.fruitmachine.controller;
+package com.colmcooney.fruitmachine.dto;
 
 import com.colmcooney.fruitmachine.domain.Machine;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,7 +16,7 @@ public record MachineResponse(
         @Schema(description = "The money the machine currently holds.", example = "10000") long floatAmount,
         @Schema(description = "Free plays currently owed to the player.", example = "0") long freePlays) {
 
-    static MachineResponse from(Machine machine) {
+    public static MachineResponse from(Machine machine) {
         return new MachineResponse(
                 machine.id(),
                 machine.config().slotCount(),

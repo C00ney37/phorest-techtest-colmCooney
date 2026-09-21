@@ -1,6 +1,9 @@
 package com.colmcooney.fruitmachine.controller;
 
 import com.colmcooney.fruitmachine.domain.Machine;
+import com.colmcooney.fruitmachine.dto.CreateMachineRequest;
+import com.colmcooney.fruitmachine.dto.MachineResponse;
+import com.colmcooney.fruitmachine.dto.PlayResponse;
 import com.colmcooney.fruitmachine.service.MachineService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

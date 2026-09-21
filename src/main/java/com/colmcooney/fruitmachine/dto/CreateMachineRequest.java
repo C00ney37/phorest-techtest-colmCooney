@@ -1,4 +1,4 @@
-package com.colmcooney.fruitmachine.controller;
+package com.colmcooney.fruitmachine.dto;
 
 import com.colmcooney.fruitmachine.domain.MachineConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,7 +40,7 @@ public record CreateMachineRequest(
      * Fills in defaults for the optional fields. Rules that involve several fields, such as the adjacent match
      * length not exceeding the slot count, are checked by {@link MachineConfig} itself.
      */
-    MachineConfig toConfig() {
+    public MachineConfig toConfig() {
         return new MachineConfig(
                 slotCount != null ? slotCount : MachineConfig.DEFAULT_SLOT_COUNT,
                 colours != null ? colours : MachineConfig.DEFAULT_COLOURS,

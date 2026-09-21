@@ -1,4 +1,4 @@
-package com.colmcooney.fruitmachine.controller;
+package com.colmcooney.fruitmachine.dto;
 
 import com.colmcooney.fruitmachine.domain.PlayOutcome;
 import com.colmcooney.fruitmachine.domain.PrizeTier;
@@ -23,7 +23,7 @@ public record PlayResponse(
         @Schema(description = "The machine's float after this play.", example = "9600") long floatAmount,
         @Schema(description = "Free plays owed to the player after this play.", example = "0") long freePlays) {
 
-    static PlayResponse from(PlayOutcome outcome) {
+    public static PlayResponse from(PlayOutcome outcome) {
         return new PlayResponse(
                 outcome.spin().slots(),
                 outcome.prizeTier(),
