@@ -1,6 +1,7 @@
 package com.colmcooney.fruitmachine.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 import com.colmcooney.fruitmachine.domain.MachineConfig;
 import com.colmcooney.fruitmachine.domain.MachineState;
@@ -10,8 +11,11 @@ import com.colmcooney.fruitmachine.domain.PrizeTier;
 import com.colmcooney.fruitmachine.domain.Spin;
 import com.colmcooney.fruitmachine.service.rule.PrizeRule;
 import com.colmcooney.fruitmachine.service.rule.PrizeRules;
+import com.colmcooney.fruitmachine.support.Colours;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import org.junit.jupiter.api.Test;
 
 /** Money is in minor units. With a play cost of 100 the small prize is 500. */
@@ -192,5 +196,48 @@ class FruitMachineServiceImplTest {
         PlayOutcome outcome = serviceShowing(FULL_HOUSE, List.of(paysWhenTheLastSlotIsYellow)).play(config, floatOf(1_000));
 
         assertThat(outcome.payout()).isEqualTo(250);
+    }
+
+    // Generalised machines: variable slot count, many colours, and k adjacent slots to win.
+
+    @Test
+    void withAMatchLengthOfThreeAPairPaysNothing() {
+        MachineConfig threeInARow = new MachineConfig(6, List.of("black", "white", "green", "yellow"), 3, PLAY_COST);
+
+        PlayOutcome outcome = serviceShowing(List.of("black", "black", "white", "white", "green", "green"))
+                .play(threeInARow, floatOf(1_000));
+
+        assertThat(outcome.prizeTier()).isEqualTo(PrizeTier.NONE);
+    }
+
+    @Test
+    void withAMatchLengthOfThreeARunOfThreeWinsTheSmallPrize() {
+        MachineConfig threeInARow = new MachineConfig(6, List.of("black", "white", "green", "yellow"), 3, PLAY_COST);
+
+        PlayOutcome outcome = serviceShowing(List.of("black", "white", "white", "white", "green", "yellow"))
+                .play(threeInARow, floatOf(1_000));
+
+        assertThat(outcome.prizeTier()).isEqualTo(PrizeTier.SMALL_PRIZE);
+        assertThat(outcome.payout()).isEqualTo(500);
+    }
+
+    @Test
+    void whenTheMatchLengthEqualsTheSlotCountAFullRowIsAJackpotNotASmallPrize() {
+        MachineConfig fullRowNeeded = new MachineConfig(4, List.of("black", "white", "green", "yellow"), 4, PLAY_COST);
+
+        PlayOutcome outcome = serviceShowing(JACKPOT).play(fullRowNeeded, floatOf(1_000));
+
+        assertThat(outcome.prizeTier()).isEqualTo(PrizeTier.JACKPOT);
+    }
+
+    @Test
+    void playsAMaximumSizeMachineWithHundredsOfColours() {
+        MachineConfig largeConfig = new MachineConfig(MachineConfig.MAX_SLOTS, Colours.numbered(500), 3, PLAY_COST);
+        FruitMachineService service = new FruitMachineServiceImpl(new SpinnerImpl(new Random(42)), PrizeRules.standard());
+
+        PlayOutcome outcome = assertTimeoutPreemptively(Duration.ofSeconds(5), () -> service.play(largeConfig, floatOf(1_000)));
+
+        assertThat(outcome.spin().slots()).hasSize(MachineConfig.MAX_SLOTS);
+        assertThat(outcome.stateAfter().floatAmount()).isNotNegative();
     }
 }

@@ -1,9 +1,12 @@
 package com.colmcooney.fruitmachine.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 import com.colmcooney.fruitmachine.domain.MachineConfig;
 import com.colmcooney.fruitmachine.domain.Spin;
+import com.colmcooney.fruitmachine.support.Colours;
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -41,6 +44,17 @@ class SpinnerImplTest {
 
         assertThat(coloursSeenInFirstSlot).containsExactlyInAnyOrderElementsOf(config.colours());
         assertThat(coloursSeenInLastSlot).containsExactlyInAnyOrderElementsOf(config.colours());
+    }
+
+    @Test
+    void spinsAMaximumSizeMachineWithHundredsOfColours() {
+        MachineConfig largeConfig = new MachineConfig(MachineConfig.MAX_SLOTS, Colours.numbered(500), 2, 100);
+
+        Spin spin = assertTimeoutPreemptively(Duration.ofSeconds(5), () -> spinner.spin(largeConfig));
+
+        assertThat(spin.slots()).hasSize(MachineConfig.MAX_SLOTS);
+        // 100,000 slots over 500 colours: every colour shows up, and nothing outside the configured colours does.
+        assertThat(new HashSet<>(spin.slots())).containsExactlyInAnyOrderElementsOf(largeConfig.colours());
     }
 
     /** With 4 slots and 4 colours a jackpot has probability 4 / 4^4 = 1 in 64. The seed keeps this deterministic. */
