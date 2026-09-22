@@ -48,3 +48,8 @@ How I used AI (Claude Code) on this project: what worked, where I steered it, wh
 ## Stage 9: Containerisation
 
 - Docker isn't installed on this machine, so the Dockerfile is unverified locally. It will be built (and smoke-tested) in CI instead, as a real check rather than a manual one.
+
+## Stage 10: CI
+
+- `mvnw` was tracked as non-executable in git, which would have broken `./mvnw` on the Linux runners. Fixed the tracked file mode before adding the workflow.
+- The Docker job builds the image, runs it, polls `/actuator/health`, then creates a real machine through the running container -- an actual smoke test, not just `docker build`. Can't be verified locally (no Docker here), so the first real check is the next push.

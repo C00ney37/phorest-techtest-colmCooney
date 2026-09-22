@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build and test
+        run: ./mvnw -B verify
+
+  docker:
+    name: Build and smoke-test the Docker image
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t fruitmachine:ci .
+
+      - name: Run container
+        run: docker run -d --name fruitmachine -p 8080:8080 fruitmachine:ci
+
+      - name: Wait for the app to become healthy
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl -sf http://localhost:8080/actuator/health | grep -q '"status":"UP"'; then
+              echo "App is healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "App did not become healthy in time"
+          docker logs fruitmachine
+          exit 1
+
+      - name: Exercise the API through the container
+        run: |
+          set -e
+          response=$(curl -sf -X POST http://localhost:8080/machines \
+            -H 'Content-Type: application/json' \
+            -d '{"playCost": 100, "startingFloat": 1000}')
+          echo "$response"
+          echo "$response" | grep -q '"floatAmount":1000'
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker logs fruitmachine
+
+      - name: Stop container
+        if: always()
+        run: docker rm -f fruitmachine
