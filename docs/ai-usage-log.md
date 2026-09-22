@@ -44,3 +44,7 @@ How I used AI (Claude Code) on this project: what worked, where I steered it, wh
 
 - Claude added logging and Micrometer counters directly to `MachineServiceImpl.play`, the one place a play is settled, rather than a separate decorator. Counters are tagged by prize tier: `fruitmachine.plays` counts plays, `fruitmachine.payouts` sums money paid out.
 - I had it verify against the packaged app rather than trust the tests alone: played a real machine and checked both the log line and the `/actuator/metrics` values matched what was played.
+
+## Stage 9: Containerisation
+
+- Docker isn't installed on this machine, so the Dockerfile is unverified locally. It will be built (and smoke-tested) in CI instead, as a real check rather than a manual one.
