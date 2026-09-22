@@ -39,3 +39,8 @@ How I used AI (Claude Code) on this project: what worked, where I steered it, wh
 
 - I told Claude which springdoc line matches Spring Boot 4.1.1 (3.1.1 or newer). Claude checked Maven Central and pinned 3.1.1.
 - Claude annotated the controller and DTOs with descriptions, examples and the documented 400/404 problem responses. The test checks the generated spec covers every endpoint and required field, and that the UI page is served.
+
+## Stage 8: Logging and metrics
+
+- Claude added logging and Micrometer counters directly to `MachineServiceImpl.play`, the one place a play is settled, rather than a separate decorator. Counters are tagged by prize tier: `fruitmachine.plays` counts plays, `fruitmachine.payouts` sums money paid out.
+- I had it verify against the packaged app rather than trust the tests alone: played a real machine and checked both the log line and the `/actuator/metrics` values matched what was played.

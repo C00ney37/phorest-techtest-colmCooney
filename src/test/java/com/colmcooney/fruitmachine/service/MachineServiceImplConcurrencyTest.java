@@ -8,6 +8,7 @@ import com.colmcooney.fruitmachine.domain.MachineState;
 import com.colmcooney.fruitmachine.domain.PlayOutcome;
 import com.colmcooney.fruitmachine.repository.MachineRepositoryImpl;
 import com.colmcooney.fruitmachine.service.rule.PrizeRules;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -32,7 +33,7 @@ class MachineServiceImplConcurrencyTest {
     @Test
     void concurrentPlaysOnOneMachineNeverLoseAnUpdate() throws Exception {
         FruitMachineService fruitMachineService = new FruitMachineServiceImpl(SpinnerImpl.secure(), PrizeRules.standard());
-        MachineService service = new MachineServiceImpl(new MachineRepositoryImpl(), fruitMachineService);
+        MachineService service = new MachineServiceImpl(new MachineRepositoryImpl(), fruitMachineService, new SimpleMeterRegistry());
         Machine machine = service.createMachine(MachineConfig.classic(PLAY_COST), STARTING_FLOAT);
 
         List<PlayOutcome> outcomes = playConcurrently(service, machine.id());

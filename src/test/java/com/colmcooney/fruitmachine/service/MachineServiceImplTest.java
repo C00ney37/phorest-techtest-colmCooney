@@ -11,6 +11,7 @@ import com.colmcooney.fruitmachine.domain.PrizeTier;
 import com.colmcooney.fruitmachine.domain.Spin;
 import com.colmcooney.fruitmachine.repository.MachineRepositoryImpl;
 import com.colmcooney.fruitmachine.service.rule.PrizeRules;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +28,7 @@ class MachineServiceImplTest {
         Spin scriptedSpin = new Spin(slots);
         FruitMachineService fruitMachineService =
                 new FruitMachineServiceImpl(spinConfig -> scriptedSpin, PrizeRules.standard());
-        return new MachineServiceImpl(new MachineRepositoryImpl(), fruitMachineService);
+        return new MachineServiceImpl(new MachineRepositoryImpl(), fruitMachineService, new SimpleMeterRegistry());
     }
 
     @Test

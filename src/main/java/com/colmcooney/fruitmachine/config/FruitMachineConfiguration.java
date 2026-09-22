@@ -9,6 +9,7 @@ import com.colmcooney.fruitmachine.service.MachineServiceImpl;
 import com.colmcooney.fruitmachine.service.Spinner;
 import com.colmcooney.fruitmachine.service.SpinnerImpl;
 import com.colmcooney.fruitmachine.service.rule.PrizeRules;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,7 +33,8 @@ public class FruitMachineConfiguration {
     }
 
     @Bean
-    public MachineService machineService(MachineRepository machineRepository, FruitMachineService fruitMachineService) {
-        return new MachineServiceImpl(machineRepository, fruitMachineService);
+    public MachineService machineService(
+            MachineRepository machineRepository, FruitMachineService fruitMachineService, MeterRegistry meterRegistry) {
+        return new MachineServiceImpl(machineRepository, fruitMachineService, meterRegistry);
     }
 }
